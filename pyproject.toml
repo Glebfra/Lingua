@@ -1,0 +1,77 @@
+[project]
+name = "lingua"
+version = "0.1.0"
+description = "Japanese language learning platform backend"
+readme = "README.md"
+authors = [
+    { name = "Glebfra", email = "gleb.frantsuzov@yandex.ru" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "Django>=5.2,<6.2",
+    "djangorestframework>=3.15,<4.0",
+    "PyJWT>=2.9,<3.0",
+    "python-decouple>=3.8,<4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.17.3",
+    "pytest>=8.3,<9.0",
+    "pytest-django>=4.9,<5.0",
+    "mypy>=1.14,<2.0",
+]
+
+[project.scripts]
+manage = "manage:main"
+
+[tool.uv]
+package = true
+
+[tool.uv.build-backend]
+module-name = "lingua_backend"
+module-root = "src"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "UP",
+    "B",
+    "SIM",
+    "N",
+    "C4",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.3",
+    "pytest>=8.3,<9.0",
+    "pytest-django>=4.9,<5.0",
+    "mypy>=1.14,<2.0",
+    "django-stubs>=6.1.2",
+    "djangorestframework-stubs>=3.18.1",
+]
+
+[tool.mypy]
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["src/tests"]
+python_files = ["test_*.py", "*_test.py"]
+DJANGO_SETTINGS_MODULE = "lingua_backend.config.settings"
+addopts = "-v --strict-markers"

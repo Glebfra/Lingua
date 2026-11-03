@@ -1,0 +1,42 @@
+# Python-generated files
+__pycache__/
+*.py[cod]
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Source directory
+src/lingua/__pycache__/
+src/lingua/lingua_app/__pycache__/
+src/lingua/lingua_backend/__pycache__/
+src/lingua/logs/

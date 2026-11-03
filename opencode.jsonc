@@ -1,0 +1,201 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Локальная модель
+  "model": "llama-local/qwen35-9b",
+  "small_model": "llama-local/qwen35-9b",
+  
+  "subagent_depth": 1,
+
+  "agent": {
+    "build": {
+      "mode": "primary",
+      "permission": {
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "architect": {
+      "mode": "primary",
+      "permission": {
+        "task": {
+          "*": "allow"
+        }
+      }
+    }
+  },
+
+  "providers": {
+    "llama-local": {
+      "name": "Local llama.cpp",
+      "package": "@opencode/ai/providers/openai-compatible",
+
+      "settings": {
+        "baseURL": "http://host.docker.internal:8080/v1"
+      },
+
+      "models": {
+        "qwen35-9b": {
+          "name": "Qwen3.5 9B Q4_K_M",
+          "modelID": "qwen35-9b",
+
+          "limit": {
+            "context": 131072,
+            "output": 131072
+          }
+        },
+        "qwen3-coder-30B-A3B-instruct": {
+          "name": "Qwen3.5 Coder 30B A3B Instruct",
+          "modelID": "qwen3-coder-30B-A3B-instruct",
+
+          "limit": {
+            "context": 32768,
+            "output": 32768
+          }
+        }
+      }
+    }
+  },
+
+  "experimental": {
+    "policies": [
+      {
+        "effect": "deny",
+        "action": "provider.use",
+        "resource": "*"
+      },
+      {
+        "effect": "allow",
+        "action": "provider.use",
+        "resource": "llama-local"
+      }
+    ]
+  },
+
+  // Основной агент
+  "default_agent": "build",
+
+  // Инструкции проекта
+  "instructions": [
+    "AGENTS.md"
+  ],
+
+  // Ограничения доступа
+  "permissions": [
+    // Запрещаем выход за пределы рабочей директории
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "deny"
+    },
+
+    // Чтение проекта
+    {
+      "action": "read",
+      "resource": "*",
+      "effect": "allow"
+    },
+
+    // Запрещаем чтение секретов
+    {
+      "action": "read",
+      "resource": "*.env",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "*.env.*",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "*.env.example",
+      "effect": "allow"
+    },
+
+    // Поиск по проекту
+    {
+      "action": "glob",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "grep",
+      "resource": "*",
+      "effect": "allow"
+    },
+
+    // Любые изменения файлов требуют подтверждения
+    {
+      "action": "edit",
+      "resource": "*",
+      "effect": "ask"
+    },
+
+    // Shell по умолчанию требует подтверждения
+    {
+      "action": "shell",
+      "resource": "*",
+      "effect": "ask"
+    },
+
+    // Разрешаем безопасные Git-команды
+    {
+      "action": "shell",
+      "resource": "git status *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git diff *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "git log *",
+      "effect": "allow"
+    },
+
+    // Блокируем потенциально опасные Git-команды
+    {
+      "action": "shell",
+      "resource": "git push *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "git reset --hard *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "git clean *",
+      "effect": "deny"
+    },
+
+    // Не разрешаем управление Docker изнутри агента
+    {
+      "action": "shell",
+      "resource": "docker *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "sudo *",
+      "effect": "deny"
+    },
+
+    // Не используем внешние web-инструменты
+    {
+      "action": "webfetch",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "websearch",
+      "resource": "*",
+      "effect": "deny"
+    }
+  ]
+}
